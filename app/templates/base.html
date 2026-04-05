@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>{{ title or "Pick'em" }}</title>
+
+<link rel="stylesheet" href="/static/style.css">
+
+<style>
+
+body{
+background:linear-gradient(145deg,#0f172a,#020617);
+color:white;
+font-family:Arial;
+margin:0;
+}
+
+.navbar{
+
+background:#020617;
+padding:15px 30px;
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+border-bottom:1px solid #1f2937;
+}
+
+.nav-left{
+display:flex;
+gap:20px;
+align-items:center;
+}
+
+.nav-left a{
+color:#22c55e;
+text-decoration:none;
+font-weight:bold;
+}
+
+.nav-right{
+display:flex;
+gap:15px;
+}
+
+.nav-right a{
+color:white;
+text-decoration:none;
+}
+
+.container{
+max-width:1000px;
+margin:auto;
+padding:30px;
+}
+
+.card{
+
+background:#111827;
+padding:25px;
+margin-bottom:25px;
+
+border-radius:18px;
+
+border:1px solid #1f2937;
+
+box-shadow:0 0 20px rgba(0,0,0,0.5);
+
+}
+
+.btn{
+
+background:linear-gradient(90deg,#0ea5e9,#2563eb);
+border:none;
+
+padding:10px 20px;
+border-radius:25px;
+
+color:white;
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+.btn:hover{
+transform:translateY(-2px);
+box-shadow:0 0 15px rgba(37,99,235,0.5);
+}
+
+.input{
+
+background:#020617;
+border:1px solid #1f2937;
+
+padding:10px;
+border-radius:10px;
+
+color:white;
+
+}
+
+h1{
+color:#22c55e;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div>
+
+
+{% include 'navbar.html' %}
+
+</div>
+
+<div class="container">
+
+{% block content %}
+{% endblock %}
+
+</div>
+
+</body>
+</html>

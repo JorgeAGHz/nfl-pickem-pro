@@ -1,0 +1,88 @@
+<style>
+.navbar {
+position:sticky;
+top:0;
+z-index:1000;
+background:linear-gradient(90deg,#020617,#0f172a);
+border-bottom:1px solid #1f2937;
+padding:10px 0;
+}
+
+.nav-container{
+max-width:1100px;
+margin:auto;
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:0 20px;
+}
+
+.nav-left{
+font-weight:bold;
+color:#22c55e;
+letter-spacing:1px;
+}
+
+.nav-links{
+display:flex;
+gap:15px;
+}
+
+.nav-links a{
+text-decoration:none;
+color:#e5e7eb;
+padding:8px 14px;
+border-radius:10px;
+transition:0.25s;
+border:1px solid transparent;
+}
+
+.nav-links a:hover{
+background:#020617;
+border:1px solid #22c55e;
+box-shadow:0 0 10px #22c55e;
+}
+
+.nav-active{
+background:#022c22;
+border:1px solid #22c55e;
+}
+</style>
+
+<div class="navbar">
+<div class="nav-container">
+
+<div class="nav-left">
+🏈 {{ league.name }}
+</div>
+
+<div class="nav-links">
+<a href="/league/{{ league.id }}" 
+class="{% if request.path.endswith('/' ~ league.id|string) %}nav-active{% endif %}">
+Picks
+</a>
+
+<a href="/league/{{ league.id }}/live"
+class="{% if '/live' in request.path %}nav-active{% endif %}">
+Live
+</a>
+
+<a href="/leaderboard/{{ league.id }}">
+Leaderboard
+</a>
+
+<a href="/">
+Home
+</a>
+
+{% if current_user.is_admin %}
+
+<a href="/admin">
+Admin Panel
+</a>
+
+{% endif %}
+</div>
+
+</div>
+</div>

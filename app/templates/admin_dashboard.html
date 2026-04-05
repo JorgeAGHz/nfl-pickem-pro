@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Admin Panel</title>
+
+<style>
+
+body{
+background:#020617;
+color:white;
+font-family:Arial;
+text-align:center;
+}
+
+.container{
+width:800px;
+margin:auto;
+}
+
+.card{
+
+background:#111827;
+padding:30px;
+margin-top:30px;
+border-radius:15px;
+
+}
+
+button{
+
+padding:12px 25px;
+margin:10px;
+border-radius:10px;
+border:none;
+cursor:pointer;
+
+}
+
+.load{
+background:#2563eb;
+color:white;
+}
+
+.update{
+background:#22c55e;
+color:white;
+}
+
+.bootstrap{
+background:#f59e0b;
+color:white;
+}
+
+.stats{
+
+display:flex;
+justify-content:space-around;
+margin-top:20px;
+
+}
+
+.stat{
+
+background:#020617;
+padding:15px;
+border-radius:10px;
+width:150px;
+
+}
+
+</style>
+
+</head>
+
+<body>
+{% include "navbar.html" %}
+<h1>Admin Panel</h1>
+
+<div class="container">
+
+<div class="card">
+
+<h2>System Stats</h2>
+
+<div class="stats">
+
+<div class="stat">
+Games<br>
+<strong>{{ games }}</strong>
+</div>
+
+<div class="stat">
+Users<br>
+<strong>{{ users }}</strong>
+</div>
+
+<div class="stat">
+Leagues<br>
+<strong>{{ leagues }}</strong>
+</div>
+
+<div class="stat">
+Live Games<br>
+<strong>{{ live_games }}</strong>
+</div>
+
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h2>Game Controls</h2>
+
+<a href="/admin/load_games">
+<button class="load">Load Games</button>
+</a>
+
+<a href="/admin/update_results">
+<button class="update">Update Scores</button>
+</a>
+
+<a href="/admin/bootstrap_results">
+<button class="bootstrap">Bootstrap Results</button>
+</a>
+
+</div>
+
+</div>
+
+</body>
+</html>

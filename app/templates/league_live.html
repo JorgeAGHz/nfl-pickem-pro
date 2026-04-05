@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+
+<style>
+
+body {
+background: linear-gradient(145deg,#0f172a,#020617);
+color:white;
+font-family:Arial;
+text-align:center;
+}
+
+.card {
+background:#111827;
+margin:25px auto;
+padding:25px;
+width:800px;
+border-radius:20px;
+box-shadow:0px 0px 20px rgba(0,0,0,0.6);
+border:1px solid #1f2937;
+}
+
+h2 {
+color:#22c55e;
+}
+
+.team-select {
+display:flex;
+justify-content:center;
+gap:30px;
+margin-top:15px;
+}
+
+.team-select label {
+cursor:pointer;
+border-radius:20px;
+padding:20px;
+transition:0.3s;
+background:#020617;
+border:2px solid #1f2937;
+width:140px;
+text-align:center;
+position:relative;
+}
+
+.team-select img {
+width:70px;
+height:70px;
+transition:0.3s;
+}
+
+.team-select input {
+display:none;
+}
+
+.team-select p {
+margin-top:10px;
+font-weight:bold;
+}
+
+.team-select input:checked + img {
+transform:scale(1.2);
+}
+
+.team-select input:checked ~ p {
+color:#22c55e;
+}
+
+.team-select label:has(input:checked) {
+background:linear-gradient(145deg,#022c22,#064e3b);
+border:2px solid #22c55e;
+box-shadow:0 0 20px #22c55e;
+transform:scale(1.05);
+}
+
+.team-select label:hover {
+transform:scale(1.05);
+box-shadow:0 0 15px #22c55e;
+}
+
+.team-select label:has(input:checked)::after {
+content:"";
+position:absolute;
+top:-5px;
+left:-5px;
+right:-5px;
+bottom:-5px;
+border-radius:20px;
+border:2px solid #22c55e;
+animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+0% { opacity:0.2; transform:scale(1); }
+50% { opacity:0.6; transform:scale(1.08); }
+100% { opacity:0.2; transform:scale(1); }
+}
+
+.save-btn {
+background: linear-gradient(90deg, #0ea5e9, #2563eb);
+color: white;
+padding: 12px 30px;
+border-radius: 30px;
+border: none;
+font-weight: bold;
+font-size: 16px;
+cursor: pointer;
+transition: all 0.3s ease;
+box-shadow: 0 0 20px rgba(37,99,235,0.4);
+}
+
+.save-btn:hover {
+transform: translateY(-2px);
+box-shadow: 0 0 25px rgba(37,99,235,0.6);
+}
+
+.save-message {
+margin-top: 15px;
+opacity: 0;
+transition: opacity 0.3s ease;
+color: #22c55e;
+font-weight: bold;
+}
+
+.show-message {
+opacity: 1;
+}
+
+.score-update {
+animation: scoreFlash 0.8s ease;
+}
+
+@keyframes scoreFlash {
+
+0% { background:#064e3b; }
+
+50% { background:#22c55e; }
+
+100% { background:transparent; }
+
+}
+
+.score-flash {
+
+animation:scoreFlash 0.6s ease;
+
+}
+
+@keyframes scoreFlash {
+
+0% { background:#064e3b; }
+
+50% { background:#22c55e; }
+
+100% { background:transparent; }
+
+}
+
+.live-leaderboard {
+
+margin:20px auto;
+width:600px;
+
+background:#111827;
+
+padding:20px;
+
+border-radius:16px;
+
+box-shadow:0 0 20px rgba(0,0,0,0.5);
+
+}
+
+#live-leaderboard {
+
+width:100%;
+border-collapse:collapse;
+
+}
+
+#live-leaderboard td,
+#live-leaderboard th {
+
+padding:10px;
+
+}
+
+.rank {
+
+font-weight:bold;
+color:#22c55e;
+
+}
+
+#live-leaderboard tbody tr:first-child {
+
+color:#fbbf24;
+font-weight:bold;
+
+}
+
+
+.rank-change {
+
+animation: rankMove 0.8s ease;
+
+}
+
+@keyframes rankMove {
+
+0% { transform:scale(1.05); background:#064e3b; }
+
+50% { transform:scale(1.08); background:#22c55e; }
+
+100% { transform:scale(1); background:transparent; }
+
+}
+</style>
+<head>
+
+<title>{{ league.name }} Live</title>
+
+<link rel="stylesheet" href="/static/style.css">
+
+</head>
+
+<body>
+
+
+{% include 'league_nav.html' %}
+
+
+<h2>{{ league.name }} — Live</h2>
+
+
+<!-- ========================= -->
+<!-- NFL WEEK SELECTOR -->
+<!-- ========================= -->
+
+{% if weeks %}
+
+<div class="day-selector">
+
+{% for w in weeks %}
+
+<a href="?week={{ w }}"
+{% if w == selected_week %}style="font-weight:bold"{% endif %}
+>
+
+Week {{ w }}
+
+</a>
+
+{% endfor %}
+
+</div>
+
+{% endif %}
+
+
+
+<!-- ========================= -->
+<!-- NBA DAY SELECTOR -->
+<!-- ========================= -->
+
+{% if days %}
+
+<div class="day-selector">
+
+{% for d in days %}
+
+<a href="?day={{ d.isoformat() }}"
+{% if d == selected_day %}style="font-weight:bold"{% endif %}
+>
+
+{{ d.strftime("%d %b") }}
+
+</a>
+
+{% endfor %}
+
+</div>
+
+{% endif %}
+
+<!-- ========================= -->
+<!-- LIVE LEADERBOARD -->
+<!-- ========================= -->
+
+<div class="live-leaderboard">
+
+<h3>🏆 LIVE LEADERBOARD</h3>
+
+<table id="live-leaderboard">
+
+<thead>
+
+<tr>
+<th>Rank</th>
+<th>Player</th>
+<th>Points</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+{% for user in users|sort(attribute='id') %}
+
+<tr data-user="{{ user.id }}">
+
+<td class="rank"></td>
+<td>{{ user.name }}</td>
+<td class="points">{{ scores[user.id] }}</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<!-- ========================= -->
+<!-- LIVE TABLE -->
+<!-- ========================= -->
+
+<div id="live-table">
+
+{% include "live_table.html" %}
+
+</div>
+
+
+
+<!-- ========================= -->
+<!-- AUTO REFRESH -->
+<!-- ========================= -->
+
+<script>
+
+let previousHTML = ""
+
+function refreshLive(){
+
+fetch("{{ url_for('league.live_update', league_id=league.id) }}" + window.location.search)
+.then(res=>res.text())
+.then(html=>{
+
+const container = document.getElementById("live-table")
+
+if(previousHTML && previousHTML !== html){
+
+container.classList.add("score-flash")
+
+setTimeout(()=>{
+container.classList.remove("score-flash")
+},600)
+
+}
+
+previousHTML = html
+
+container.innerHTML = html
+
+updateLeaderboard()
+
+})
+
+}
+
+function updateLeaderboard(){
+
+let rows = Array.from(document.querySelectorAll("#live-leaderboard tbody tr"))
+
+rows.sort((a,b)=>{
+
+let pa = parseInt(a.querySelector(".points").innerText)
+let pb = parseInt(b.querySelector(".points").innerText)
+
+return pb - pa
+
+})
+
+const tbody = document.querySelector("#live-leaderboard tbody")
+
+rows.forEach((row,i)=>{
+
+let oldRank = row.querySelector(".rank").innerText
+let newRank = i+1
+
+row.querySelector(".rank").innerText = newRank
+
+if(oldRank && oldRank != newRank){
+
+row.classList.add("rank-change")
+
+setTimeout(()=>{
+row.classList.remove("rank-change")
+},800)
+
+}
+
+tbody.appendChild(row)
+
+})
+
+}
+
+setInterval(refreshLive,15000)
+
+updateLeaderboard()
+
+</script>
+
+
+</body>
+</html>

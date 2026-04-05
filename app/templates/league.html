@@ -1,0 +1,114 @@
+{% include 'league_nav.html' %}
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>{{ league.name }}</title>
+<style>
+body{font-family:Arial;background:#f2f2f2;text-align:center;}
+.card{background:white;margin:20px auto;padding:20px;width:900px;border-radius:10px;box-shadow:0px 0px 10px gray;}
+table{margin:auto;border-collapse:collapse;}
+td,th{border:1px solid #ccc;padding:8px;}
+</style>
+</head>
+<body>
+
+<h1>{{ league.name }}</h1>
+<a href="/">⬅ Volver</a>
+
+<h2>🎮 En Vivo</h2>
+
+{% if live_games %}
+<table>
+<tr>
+<th>Jugador</th>
+{% for g in live_games %}
+<th>{{ g.home_team }} vs {{ g.away_team }}</th>
+{% endfor %}
+<th>Puntos</th>
+</tr>
+
+{% for u in users %}
+<tr>
+<td>{{ u.name }}</td>
+
+{% for g in live_games %}
+<td>
+{{ picks_map.get((u.id, g.id), "-") }}
+<br>
+{{ g.home_score }} - {{ g.away_score }}
+</td>
+{% endfor %}
+
+<td><b>{{ scores[u.id] }}</b></td>
+</tr>
+{% endfor %}
+</table>
+{% else %}
+<p>No hay juegos en curso</p>
+{% endif %}
+
+<hr>
+
+<h2>Mis Picks</h2>
+
+<form method="POST" action="/submit_picks/{{ league.id }}">
+
+{% for game in games %}
+<div class="card">
+
+<h3>{{ game.home_team }} vs {{ game.away_team }}</h3>
+
+{% if is_game_locked(game) %}
+<p><b>🔒 Cerrado</b></p>
+{% endif %}
+
+{% if game.sport == "NFL" %}
+
+<label>
+<input type="radio" name="game{{ game.id }}" value="HOME7"
+{% if my_picks.get(game.id) == "HOME7" %}checked{% endif %}
+{% if is_game_locked(game) %}disabled{% endif %}>
+Local +7
+</label>
+
+<label>
+<input type="radio" name="game{{ game.id }}" value="AWAY7"
+{% if my_picks.get(game.id) == "AWAY7" %}checked{% endif %}
+{% if is_game_locked(game) %}disabled{% endif %}>
+Visitante +7
+</label>
+
+<label>
+<input type="radio" name="game{{ game.id }}" value="DIFFERENCE"
+{% if my_picks.get(game.id) == "DIFFERENCE" %}checked{% endif %}
+{% if is_game_locked(game) %}disabled{% endif %}>
+Dif < 7
+</label>
+
+{% else %}
+
+<label>
+<input type="radio" name="game{{ game.id }}" value="{{ game.home_team }}"
+{% if my_picks.get(game.id) == game.home_team %}checked{% endif %}
+{% if is_game_locked(game) %}disabled{% endif %}>
+{{ game.home_team }}
+</label>
+
+<label>
+<input type="radio" name="game{{ game.id }}" value="{{ game.away_team }}"
+{% if my_picks.get(game.id) == game.away_team %}checked{% endif %}
+{% if is_game_locked(game) %}disabled{% endif %}>
+{{ game.away_team }}
+</label>
+
+{% endif %}
+
+</div>
+{% endfor %}
+
+<button>Guardar Picks</button>
+</form>
+
+</body>
+</html>

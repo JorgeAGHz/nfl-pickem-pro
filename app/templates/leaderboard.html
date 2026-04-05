@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+
+.leaderboard{
+
+max-width:700px;
+margin:auto;
+
+background:#111827;
+
+padding:25px;
+
+border-radius:18px;
+
+border:1px solid #1f2937;
+
+box-shadow:0 0 25px rgba(0,0,0,0.6);
+
+}
+
+.rank-row{
+
+display:flex;
+
+justify-content:space-between;
+
+padding:12px;
+
+border-bottom:1px solid #1f2937;
+
+align-items:center;
+
+}
+
+.rank{
+
+font-size:20px;
+width:40px;
+}
+
+.player{
+flex:1;
+}
+
+.points{
+font-weight:bold;
+color:#22c55e;
+}
+
+.gold{color:#fbbf24;}
+.silver{color:#d1d5db;}
+.bronze{color:#f97316;}
+
+</style>
+
+<h1>🏆 Leaderboard</h1>
+
+<div class="leaderboard">
+
+{% for p in scores %}
+
+<div class="rank-row">
+
+<div class="rank">
+
+{% if loop.index == 1 %}
+<span class="gold">🥇</span>
+
+{% elif loop.index == 2 %}
+<span class="silver">🥈</span>
+
+{% elif loop.index == 3 %}
+<span class="bronze">🥉</span>
+
+{% else %}
+{{ loop.index }}
+{% endif %}
+
+</div>
+
+<div class="player">
+{{ p.name }}
+</div>
+
+<div class="points">
+{{ p.points }}
+</div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% endblock %}

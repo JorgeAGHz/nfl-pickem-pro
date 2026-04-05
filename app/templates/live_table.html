@@ -1,0 +1,232 @@
+<style>
+
+.live-dot{
+width:10px;
+height:10px;
+background:#ef4444;
+border-radius:50%;
+display:inline-block;
+margin-right:6px;
+animation:livePulse 1.5s infinite;
+}
+
+@keyframes livePulse{
+0%{transform:scale(1);opacity:1;}
+50%{transform:scale(1.4);opacity:0.6;}
+100%{transform:scale(1);opacity:1;}
+}
+
+.correct{
+background:#022c22;
+box-shadow:0 0 8px #22c55e inset;
+}
+
+.incorrect{
+background:#2c0202;
+box-shadow:0 0 8px #ef4444 inset;
+}
+
+.spread{
+font-size:12px;
+color:#9ca3af;
+margin-top:4px;
+}
+
+.pick-dist{
+display:flex;
+justify-content:center;
+gap:10px;
+margin-top:6px;
+font-size:11px;
+color:#9ca3af;
+}
+
+.clutch{
+margin-top:4px;
+font-size:11px;
+color:#f59e0b;
+font-weight:bold;
+}
+
+</style>
+
+
+<table class="live-table">
+
+<thead>
+
+<tr>
+
+<th>Player</th>
+
+{% for g in live_games %}
+
+<th>
+
+<div style="display:flex;align-items:center;justify-content:center;gap:6px">
+
+<img src="{{ g.home_logo }}" width="22">
+
+<span class="score">
+{{ g.home_score or 0 }} - {{ g.away_score or 0 }}
+</span>
+
+<img src="{{ g.away_logo }}" width="22">
+
+</div>
+
+
+{% if g.spread %}
+<div class="spread">
+
+{% if g.spread < 0 %}
+Fav {{ g.home_abbr }} {{ g.spread }}
+{% else %}
+Fav {{ g.away_abbr }} +{{ g.spread }}
+{% endif %}
+
+</div>
+{% endif %}
+
+
+{% if clutch_game == g.id %}
+<div class="clutch">
+🔥 CLUTCH
+</div>
+{% endif %}
+
+
+{% if pick_distribution %}
+{% set dist = pick_distribution[g.id] %}
+
+<div class="pick-dist">
+
+<span>
+<img src="{{ g.home_logo }}" width="14">
+{{ dist.home }}
+</span>
+
+<span>
+<img src="{{ g.away_logo }}" width="14">
+{{ dist.away }}
+</span>
+
+{% if g.sport == "NFL" %}
+<span>D {{ dist.diff }}</span>
+{% endif %}
+
+</div>
+
+{% endif %}
+
+
+<div class="clock">
+
+{% set state = g | game_state %}
+
+{% if state == "Scheduled" %}
+
+<span class="status-scheduled">
+🕒 {{ g.game_date | to_local_time }}
+</span>
+
+{% elif state == "Final" %}
+
+<span class="status-final">
+✔ Final
+</span>
+
+{% else %}
+
+<span class="status-live">
+
+<span class="live-dot"></span>
+
+{% if g.clock %}
+{{ g.clock }}
+{% endif %}
+
+{% if g.period %}
+Q{{ g.period }}
+{% endif %}
+
+</span>
+
+{% endif %}
+
+</div>
+
+</th>
+
+{% endfor %}
+
+<th>Total</th>
+
+</tr>
+
+</thead>
+
+
+<tbody>
+
+{% for u in users %}
+
+<tr>
+
+<td>{{ u.name }}</td>
+
+{% for g in live_games %}
+
+{% set cell = live_matrix[u.id][g.id] %}
+
+<td
+class="pick-cell
+{% if g.status and 'final' in g.status.lower() %}
+    {% if cell.correct == True %}
+        correct
+    {% elif cell.correct == False %}
+        incorrect
+    {% endif %}
+{% endif %}
+"
+>
+
+{% if cell.display == "D" %}
+
+<strong>D</strong>
+
+{% elif cell.display and cell.display != "-" %}
+
+<img src="{{ cell.display }}" width="22">
+
+{% if cell.display == g.home_logo and g.home_odds %}
+<div class="spread">{{ g.home_odds }}</div>
+{% endif %}
+
+{% if cell.display == g.away_logo and g.away_odds %}
+<div class="spread">{{ g.away_odds }}</div>
+{% endif %}
+
+{% else %}
+
+-
+
+{% endif %}
+
+</td>
+
+{% endfor %}
+
+<td>
+
+<strong>{{ scores[u.id] }}</strong>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+
+</table>

@@ -1,0 +1,150 @@
+body{
+background:#0f172a;
+color:white;
+font-family:Arial, Helvetica, sans-serif;
+margin:0;
+padding:20px;
+}
+
+/* =========================
+NAVBAR
+========================= */
+
+.navbar{
+display:flex;
+align-items:center;
+gap:25px;
+background:#020617;
+padding:15px 25px;
+border-bottom:1px solid #1e293b;
+margin-bottom:25px;
+}
+
+.navbar a{
+color:#e2e8f0;
+text-decoration:none;
+font-weight:600;
+font-size:15px;
+}
+
+.navbar a:hover{
+color:#38bdf8;
+}
+
+
+/* =========================
+HEADERS
+========================= */
+
+h1,h2,h3{
+margin-top:0;
+}
+
+
+/* =========================
+DAY SELECTOR
+========================= */
+
+.day-selector{
+margin-bottom:20px;
+}
+
+.day-selector a{
+color:#e2e8f0;
+text-decoration:none;
+margin-right:12px;
+font-weight:600;
+padding:6px 10px;
+border-radius:6px;
+background:#1e293b;
+}
+
+.day-selector a:hover{
+background:#334155;
+}
+
+
+/* =========================
+LIVE TABLE
+========================= */
+
+.live-table{
+border-collapse:collapse;
+width:100%;
+margin-top:15px;
+}
+
+.live-table th,
+.live-table td{
+border:1px solid #334155;
+padding:8px;
+text-align:center;
+}
+
+.live-table th{
+background:#020617;
+font-size:13px;
+}
+
+.live-table tr:nth-child(even){
+background:#1e293b;
+}
+
+
+/* =========================
+TEAM LOGOS
+========================= */
+
+.live-table img{
+vertical-align:middle;
+}
+
+
+/* =========================
+PICK RESULTS
+========================= */
+
+.correct{
+background:#14532d;
+}
+
+.incorrect{
+background:#7f1d1d;
+}
+
+
+/* =========================
+GAME STATUS
+========================= */
+
+.status-live{
+color:#ef4444;
+font-weight:700;
+}
+
+.status-final{
+color:#9ca3af;
+}
+
+.status-scheduled{
+color:#94a3b8;
+}
+
+
+/* =========================
+SCORE
+========================= */
+
+.score{
+font-weight:bold;
+}
+
+
+/* =========================
+CLOCK
+========================= */
+
+.clock{
+font-size:12px;
+margin-top:4px;
+}

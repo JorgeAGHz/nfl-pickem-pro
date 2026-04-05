@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card" style="max-width:400px;margin:auto">
+
+<h1>Login</h1>
+
+<form method="POST">
+
+<input class="input" name="email" placeholder="Email" required>
+<br><br>
+
+<input class="input" name="password" type="password" placeholder="Password" autofill= "off" autocomplete="off" required>
+
+<br><br>
+
+<button class="btn">Login</button>
+
+</form>
+
+<br>
+
+<a href="/register">Create account</a>
+
+</div>
+
+{% endblock %}

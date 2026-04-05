@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<title>Dashboard</title>
+
+<link rel="stylesheet" href="/static/style.css">
+
+<style>
+
+body{
+background:linear-gradient(145deg,#0f172a,#020617);
+color:white;
+font-family:Arial;
+text-align:center;
+}
+
+.dashboard-container{
+width:1000px;
+margin:auto;
+}
+
+.league-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:25px;
+margin-top:30px;
+}
+
+.league-card{
+
+background:#111827;
+
+padding:20px;
+
+border-radius:16px;
+
+border:1px solid #1f2937;
+
+box-shadow:0 0 15px rgba(0,0,0,0.4);
+
+transition:0.3s;
+
+}
+
+.league-card:hover{
+
+transform:translateY(-4px);
+
+box-shadow:0 0 20px #22c55e;
+
+}
+
+.league-stats{
+
+display:flex;
+
+flex-direction:column;
+
+gap:6px;
+
+margin:15px 0;
+
+color:#9ca3af;
+
+}
+
+.league-btn{
+
+display:inline-block;
+
+margin-top:10px;
+
+padding:10px 16px;
+
+border-radius:10px;
+
+background:#2563eb;
+
+color:white;
+
+text-decoration:none;
+
+font-weight:bold;
+
+}
+
+.create-league{
+
+margin-top:40px;
+
+background:#111827;
+
+padding:30px;
+
+border-radius:16px;
+
+border:1px solid #1f2937;
+
+}
+
+.league-input{
+
+padding:12px;
+
+border-radius:8px;
+
+border:none;
+
+width:260px;
+
+margin-bottom:20px;
+
+}
+
+.sport-select{
+
+display:flex;
+
+justify-content:center;
+
+gap:25px;
+
+margin-bottom:20px;
+
+}
+
+.sport-select input{
+
+display:none;
+
+}
+
+.sport-card{
+
+padding:20px;
+
+border-radius:12px;
+
+background:#020617;
+
+border:2px solid #1f2937;
+
+cursor:pointer;
+
+transition:0.3s;
+
+width:120px;
+
+}
+
+.sport-icon{
+
+font-size:32px;
+
+}
+
+.sport-card:hover{
+
+transform:scale(1.05);
+
+border:2px solid #22c55e;
+
+}
+
+.sport-select input:checked + .sport-card{
+
+border:2px solid #22c55e;
+
+background:#022c22;
+
+box-shadow:0 0 10px #22c55e;
+
+}
+
+.create-btn{
+
+background:linear-gradient(90deg,#0ea5e9,#2563eb);
+
+padding:12px 30px;
+
+border:none;
+
+border-radius:30px;
+
+color:white;
+
+font-weight:bold;
+
+cursor:pointer;
+
+}
+
+.admin-panel{
+
+margin-top:40px;
+padding:20px;
+background:#111827;
+border-radius:16px;
+border:1px solid #1f2937;
+
+}
+
+.leaderboard-preview{
+
+margin-top:15px;
+
+border-top:1px solid #1f2937;
+
+padding-top:10px;
+
+}
+
+.leaderboard-row{
+
+display:flex;
+
+justify-content:space-between;
+
+font-size:14px;
+
+color:#9ca3af;
+
+margin-top:4px;
+
+}
+.invite-container{
+
+display:flex;
+gap:8px;
+justify-content:center;
+margin-top:12px;
+
+}
+
+.invite-input{
+
+padding:10px;
+border-radius:8px;
+
+border:1px solid #1f2937;
+
+background:#020617;
+
+color:white;
+
+width:150px;
+
+}
+
+.invite-input:focus{
+
+outline:none;
+
+border:1px solid #22c55e;
+
+}
+
+.invite-btn{
+
+background:#22c55e;
+
+border:none;
+
+padding:10px 14px;
+
+border-radius:8px;
+
+cursor:pointer;
+
+color:white;
+
+font-weight:bold;
+
+}
+
+.invite-btn:hover{
+
+background:#16a34a;
+
+}
+.league-input{
+
+padding:12px;
+
+border-radius:10px;
+
+border:1px solid #1f2937;
+
+background:#020617;
+
+color:white;
+
+width:260px;
+
+margin-bottom:25px;
+
+}
+
+.league-input:focus{
+
+outline:none;
+
+border:1px solid #22c55e;
+
+box-shadow:0 0 8px #22c55e;
+
+}
+</style>
+
+</head>
+
+<body>
+{% include "navbar.html" %}
+<div class="dashboard-container">
+
+<h1>🏆 Your Leagues</h1>
+
+
+<!-- ========================= -->
+<!-- LEAGUES -->
+<!-- ========================= -->
+
+<div class="league-grid">
+
+{% for item in leagues %}
+
+<div class="league-card">
+
+<h3>{{ item.league.name }}</h3>
+
+<p>
+
+{% if item.league.sport == "NFL" %}
+🏈 NFL
+{% else %}
+🏀 NBA
+{% endif %}
+
+</p>
+
+<div class="league-stats">
+
+<span>👥 {{ item.players }} players</span>
+
+<span>🔴 {{ item.live_games }} live games</span>
+
+<span>🏆 Rank #{{ item.rank }}</span>
+
+</div>
+<div class="leaderboard-preview">
+
+<h4>Top Players</h4>
+
+{% for p in item.top %}
+
+<div class="leaderboard-row">
+
+<span class="rank">
+
+{% if p.rank == 1 %}🥇
+{% elif p.rank == 2 %}🥈
+{% elif p.rank == 3 %}🥉
+{% endif %}
+
+</span>
+
+<span>{{ p.name }}</span>
+
+<span>{{ p.points }}</span>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+<a href="/league/{{ item.league.id }}" class="league-btn">
+Enter League
+</a>
+
+<form method="POST" action="/invite/{{ item.league.id }}">
+
+<div class="invite-container">
+
+<input
+type="email"
+name="email"
+placeholder="Enter player email"
+class="invite-input"
+required
+>
+
+<button class="invite-btn">
+✉ Invite
+</button>
+
+</div>
+
+
+</div>
+
+
+</form>
+
+{% endfor %}
+
+</div>
+
+
+<!-- ========================= -->
+<!-- CREATE LEAGUE -->
+<!-- ========================= -->
+
+<div class="create-league">
+
+<h2>Create League</h2>
+
+<form action="/create_league" method="POST">
+
+<input
+type="text"
+name="league_name"
+placeholder="League name (ex: Office Pickem)"
+required
+class="league-input"
+/>
+
+<div class="sport-select">
+
+<label>
+
+<input type="radio" name="sport" value="NFL" required>
+
+<div class="sport-card">
+
+<span class="sport-icon">🏈</span>
+
+<p>NFL</p>
+
+</div>
+
+</label>
+
+<label>
+
+<input type="radio" name="sport" value="NBA">
+
+<div class="sport-card">
+
+<span class="sport-icon">🏀</span>
+
+<p>NBA</p>
+
+</div>
+
+</label>
+
+</div>
+
+<button class="create-btn">Create League</button>
+
+</form>
+
+</div>
+
+
+<!-- ========================= -->
+<!-- ADMIN PANEL -->
+<!-- ========================= -->
+
+{% if current_user.is_admin %}
+
+<div class="admin-panel">
+
+<h2>⚙️ Admin Panel</h2>
+
+<a href="/admin/load_games">Load Games</a>
+<br><br>
+<a href="/admin/update_results">Update Results</a>
+
+</div>
+
+{% endif %}
+
+
+</div>
+
+</body>
+</html>
