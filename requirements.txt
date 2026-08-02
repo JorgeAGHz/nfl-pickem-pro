@@ -1,5 +1,6 @@
-Flask
-Flask-Login
-Flask-SQLAlchemy
+flask
+flask_sqlalchemy
+flask_login
+apscheduler
 requests
-psycopg2-binary
+pytz

@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card">
+
+    <h1>Season Administration</h1>
+
+    <h3>Create Season</h3>
+
+    <form
+        method="POST"
+        action="/admin/seasons/create"
+    >
+
+        <select
+            name="sport"
+            class="input"
+        >
+            <option value="NFL">NFL</option>
+            <option value="NBA">NBA</option>
+        </select>
+
+        <input
+            class="input"
+            type="number"
+            name="year"
+            placeholder="Year"
+            required
+        >
+
+        <button
+            class="btn"
+            type="submit"
+        >
+            Create
+        </button>
+
+    </form>
+
+</div>
+
+
+<div class="card">
+
+<h2>Seasons</h2>
+
+<table
+style="
+width:100%;
+border-collapse:collapse;
+"
+>
+
+<tr>
+
+<th align="left">Sport</th>
+
+<th align="left">Year</th>
+
+<th align="left">Status</th>
+
+<th align="left">Week</th>
+
+<th></th>
+
+</tr>
+
+{% for season in seasons %}
+
+<tr>
+
+<td>{{ season.sport }}</td>
+
+<td>{{ season.year }}</td>
+
+<td>{{ season.status }}</td>
+
+<td>
+
+{{ season.current_week or "-" }}
+
+</td>
+
+<td>
+
+{% if season.status=="UPCOMING" %}
+
+<form
+method="POST"
+action="/admin/seasons/{{season.id}}/activate"
+style="display:inline;"
+>
+
+<button
+class="btn"
+type="submit"
+>
+
+Activate
+
+</button>
+
+</form>
+
+{% endif %}
+
+{% if season.status=="ACTIVE" %}
+
+<form
+method="POST"
+action="/admin/seasons/{{season.id}}/close"
+style="display:inline;"
+>
+
+<button
+class="btn"
+type="submit"
+>
+
+Close
+
+</button>
+
+</form>
+
+{% endif %}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+{% endblock %}

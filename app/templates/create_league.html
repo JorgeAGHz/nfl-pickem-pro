@@ -1,39 +1,114 @@
-{% extends "layout.html" %}
+{% extends "base.html" %}
 
-{% block body %}
+{% block content %}
 
-<h2>Create League</h2>
+<h1>Create League</h1>
 
-<form method="post">
+<form method="POST">
 
-<input name="name" placeholder="League Name">
+    <p>
+        League Name
+        <br>
+        <input
+            type="text"
+            name="name"
+            required
+        >
+    </p>
 
-<br><br>
+    <p>
+        Season
+        <br>
 
-<select name="sport">
+        <select
+            name="season_id"
+            required
+        >
 
-<option value="NFL">
-NFL (Spread Picks)
-</option>
+            {% for season in seasons %}
 
-<option value="NBA">
-Basketball (Winner Only)
-</option>
+                <option value="{{ season.id }}">
 
-</select>
+                    {{ season.sport }}
+                    {{ season.year }}
+                    ({{ season.status }})
 
-<br><br>
+                </option>
 
-<button type="submit">
-Create
-</button>
+            {% endfor %}
+
+        </select>
+
+    </p>
+
+    <p>
+
+        Pick Mode
+
+        <br>
+
+        <select
+            name="pick_mode"
+            required
+        >
+
+            {% for mode in pick_modes %}
+
+                <option value="{{ mode }}">
+                    {{ mode }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </p>
+
+    <p>
+
+        Visibility
+
+        <br>
+
+        <select
+            name="visibility"
+            required
+        >
+
+            {% for visibility in visibility_options %}
+
+                <option value="{{ visibility }}">
+                    {{ visibility }}
+                </option>
+
+            {% endfor %}
+
+        </select>
+
+    </p>
+
+    <p>
+
+        <label>
+
+            <input
+                type="checkbox"
+                name="include_playoffs"
+                checked
+            >
+
+            Include Playoffs
+
+        </label>
+
+    </p>
+
+    <button type="submit">
+
+        Create League
+
+    </button>
 
 </form>
-
-<br>
-
-<a href="/">
-Back
-</a>
 
 {% endblock %}

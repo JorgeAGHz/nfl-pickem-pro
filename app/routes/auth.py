@@ -1,139 +1,197 @@
-from flask import Blueprint, render_template, request, redirect, session
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, logout_user, login_required, current_user
+from flask import (
+    Blueprint,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    flash
+)
 
-from app.models import User, Membership, Invite
+from flask_login import (
+    login_user,
+    logout_user,
+    login_required
+)
+
+from werkzeug.security import (
+    generate_password_hash,
+    check_password_hash
+)
+
 from app.extensions import db
 
-
-# =========================
-# BLUEPRINT
-# =========================
-
-auth_bp = Blueprint("auth", __name__)
+from app.models import User
 
 
-# =========================
+auth_bp = Blueprint(
+    "auth",
+    __name__
+)
+
+
+# =====================================================
 # LOGIN
-# =========================
+# =====================================================
 
-@auth_bp.route("/login", methods=["GET", "POST"])
+@auth_bp.route(
+    "/login",
+    methods=["GET", "POST"]
+)
 def login():
 
     if request.method == "POST":
 
-        email = request.form["email"]
-        password = request.form["password"]
+        email = request.form.get(
+            "email",
+            ""
+        ).strip().lower()
 
-        user = User.query.filter_by(email=email).first()
+        password = request.form.get(
+            "password",
+            ""
+        )
 
-        if user and check_password_hash(user.password, password):
+        user = User.query.filter_by(
+            email=email
+        ).first()
 
-            login_user(user)
+        if not user:
 
-            pending = session.pop("pending_invite", None)
+            flash(
+                "Invalid credentials.",
+                "danger"
+            )
 
-            if pending:
-                invite = Invite.query.filter_by(token=pending).first()
+            return render_template(
+                "login.html"
+            )
 
-                if invite:
+        if not check_password_hash(
 
-                    existing = Membership.query.filter_by(
-                        user_id=user.id,
-                        league_id=invite.league_id
-                    ).first()
+            user.password_hash,
 
-                    if not existing:
-                        membership = Membership(
-                            user_id=user.id,
-                            league_id=invite.league_id
-                        )
+            password
 
-                        db.session.add(membership)
+        ):
 
-                    db.session.delete(invite)
-                    db.session.commit()
+            flash(
+                "Invalid credentials.",
+                "danger"
+            )
 
-            return redirect("/")
+            return render_template(
+                "login.html"
+            )
 
-    return render_template("login.html")
+        login_user(user)
+
+        return redirect(
+            url_for(
+                "league.dashboard"
+            )
+        )
+
+    return render_template(
+        "login.html"
+    )
 
 
-# =========================
+# =====================================================
 # REGISTER
-# =========================
+# =====================================================
 
-@auth_bp.route("/register", methods=["GET", "POST"])
+@auth_bp.route(
+    "/register",
+    methods=["GET", "POST"]
+)
 def register():
 
     if request.method == "POST":
 
-        name = request.form["name"]
-        email = request.form["email"]
-        password = request.form["password"]
+        name = request.form.get(
+            "name",
+            ""
+        ).strip()
 
-        existing_user = User.query.filter_by(email=email).first()
+        email = request.form.get(
+            "email",
+            ""
+        ).strip().lower()
+
+        password = request.form.get(
+            "password",
+            ""
+        )
+
+        existing_user = User.query.filter_by(
+            email=email
+        ).first()
 
         if existing_user:
-            return "Este correo ya está registrado. Intenta iniciar sesión."
 
-        hashed = generate_password_hash(password)
-        
-        admin_exists = User.query.filter_by(is_admin=True).first()
-        if not admin_exists:
-            is_admin = True
-        else:
-            is_admin = False
+            flash(
+                "Email already registered.",
+                "danger"
+            )
+
+            return render_template(
+                "register.html"
+            )
+
+        is_first_user = (
+
+            User.query.count() == 0
+
+        )
 
         user = User(
-            name=name,
-            email=email,
-            password=hashed,
-            is_admin=is_admin
-        )
-        
 
+            name=name,
+
+            email=email,
+
+            password_hash=generate_password_hash(
+                password
+            ),
+
+            is_admin=is_first_user
+
+        )
 
         db.session.add(user)
+
         db.session.commit()
 
-        # =========================
-        # JOIN LEAGUE IF INVITED
-        # =========================
+        flash(
+            "Account created successfully.",
+            "success"
+        )
 
-        token = session.pop("invite_token", None)
+        return redirect(
+            url_for(
+                "auth.login"
+            )
+        )
 
-        if token:
+    return render_template(
+        "register.html"
+    )
 
-            invite = Invite.query.filter_by(token=token).first()
 
-            if invite and not invite.used:
-
-                membership = Membership(
-                    user_id=user.id,
-                    league_id=invite.league_id
-                )
-
-                db.session.add(membership)
-
-                invite.used = True
-
-                db.session.commit()
-
-                return redirect(f"/league/{invite.league_id}")
-
-        return redirect("/login")
-
-    return render_template("register.html")
-
-# =========================
+# =====================================================
 # LOGOUT
-# =========================
+# =====================================================
 
-@auth_bp.route("/logout")
+@auth_bp.route(
+    "/logout"
+)
 @login_required
 def logout():
 
     logout_user()
 
-    return redirect("/login")
+    return redirect(
+        url_for(
+            "auth.login"
+        )
+    )

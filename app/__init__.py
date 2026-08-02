@@ -26,7 +26,17 @@ def create_app():
     # IMPORT MODELS (IMPORTANT)
     # =========================
 
-    from app.models import User, League, Membership, Game, Pick, Invite
+    from app.models import (
+        User,
+        Season,
+        League,
+        LeagueSettings,
+        Membership,
+        Invite,
+        Game,
+        Pick,
+        LeagueWeekResult
+    )
 
     # =========================
     # USER LOADER
@@ -34,7 +44,10 @@ def create_app():
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User.query.get(int(user_id))
+        return db.session.get(
+        User,
+        int(user_id)
+    )
 
     # =========================
     # BLUEPRINTS
@@ -96,25 +109,14 @@ def create_app():
     # SCHEDULER
     # =========================
 
-    from apscheduler.schedulers.background import BackgroundScheduler
-    from app.services.espn_service import update_results
-
-    scheduler = BackgroundScheduler()
-
-    def scheduled_update():
-
-        with app.app_context():
-            update_results()
-
-    scheduler.add_job(
-        func=scheduled_update,
-        trigger="interval",
-        seconds=30,
-        max_instances=1,
-        coalesce=True
+    from app.services.scheduler_service import (
+        start_scheduler
     )
 
-    if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
-        scheduler.start()
+    if os.environ.get(
+        "WERKZEUG_RUN_MAIN"
+    ) == "true":
+
+        start_scheduler(app)
 
     return app

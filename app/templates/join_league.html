@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Join League</h1>
+
+<form method="POST">
+
+    <p>
+
+        Invite Code
+
+        <br>
+
+        <input
+            type="text"
+            name="invite_code"
+            required
+        >
+
+    </p>
+
+    <button type="submit">
+
+        Join
+
+    </button>
+
+</form>
+
+{% endblock %}
