@@ -443,3 +443,30 @@ def is_owner(
         return False
 
     return membership.role == ROLE_OWNER
+
+# =====================================================
+# INVITATION PREVIEW
+# =====================================================
+
+def get_league_preview_by_invite(invite_code):
+    """
+    Return the information required to preview
+    a league before joining.
+    """
+
+    league = League.query.filter_by(
+        invite_code=invite_code,
+        is_archived=False
+    ).first()
+
+    if not league:
+        return None
+
+    member_count = Membership.query.filter_by(
+        league_id=league.id
+    ).count()
+
+    return {
+        "league": league,
+        "member_count": member_count
+    }

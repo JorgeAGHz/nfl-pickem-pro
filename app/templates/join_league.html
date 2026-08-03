@@ -15,10 +15,44 @@
         <input
             type="text"
             name="invite_code"
+            value="{{ request.args.get('code', '') }}"
             required
         >
 
     </p>
+
+    {% if preview %}
+
+    <hr>
+
+    <h2>League Preview</h2>
+
+    <p>
+        <strong>Name:</strong>
+        {{ preview.league.name }}
+    </p>
+
+    <p>
+        <strong>Season:</strong>
+        {{ preview.league.season.year }}
+        {{ preview.league.season.sport }}
+    </p>
+
+    <p>
+        <strong>Members:</strong>
+        {{ preview.member_count }}
+        / {{ preview.league.settings.max_players }}
+    </p>
+
+    {% elif request.args.get('code') %}
+
+    <hr>
+
+    <p>
+        <strong>League not found.</strong>
+    </p>
+
+    {% endif %}
 
     <button type="submit">
 

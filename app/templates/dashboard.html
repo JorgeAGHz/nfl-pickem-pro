@@ -36,9 +36,16 @@
                     public_id=item.league.public_id
                 ) }}">
 
-                    {{ item.league.name }}
+                    <strong>{{ item.league.name }}</strong>
 
                 </a>
+
+                <br>
+
+                Members:
+                {{ item.league.memberships|length }}
+
+                <br><br>
 
             </li>
 

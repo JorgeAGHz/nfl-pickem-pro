@@ -16,13 +16,23 @@
 
 <p>
 
-    Invite Code:
+    <strong>Invite Code:</strong>
 
-    <strong>
+    {{ league.invite_code }}
 
-        {{ league.invite_code }}
+</p>
 
-    </strong>
+<p>
+
+    <strong>Invite Link:</strong>
+
+    <br>
+
+    <code>
+
+        {{ request.url_root }}league/join?code={{ league.invite_code }}
+
+    </code>
 
 </p>
 
@@ -56,7 +66,7 @@
 
         <li>
 
-            User #{{ membership.user_id }}
+            {{ membership.user.name }}
 
             ({{ membership.role }})
 

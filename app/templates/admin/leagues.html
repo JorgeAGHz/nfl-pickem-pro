@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="card">
+
+    <h1>League Administration</h1>
+
+    <p>
+        Aquí podrás administrar todas las ligas del sistema.
+    </p>
+
+</div>
+
+<div class="card">
+
+    <h2>Leagues</h2>
+
+    {% if leagues %}
+
+    <table style="width:100%; border-collapse:collapse;">
+
+        <tr>
+            <th align="left">Name</th>
+            <th align="left">Owner</th>
+            <th align="left">Members</th>
+        </tr>
+
+        {% for league in leagues %}
+
+        <tr>
+
+            <td>{{ league.name }}</td>
+
+            <td>{{ league.owner.name }}</td>
+
+            <td>{{ league.memberships|length }}</td>
+
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+    {% else %}
+
+    <p>No leagues have been created yet.</p>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

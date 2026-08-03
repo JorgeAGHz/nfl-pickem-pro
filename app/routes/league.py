@@ -41,9 +41,12 @@ from app.services.league_service import (
 
     get_league_by_public_id,
 
+    get_league_preview_by_invite,
+
     is_member
 
 )
+
 
 league_bp = Blueprint(
     "league",
@@ -65,11 +68,8 @@ def dashboard():
     )
 
     return render_template(
-
         "dashboard.html",
-
         grouped_leagues=grouped_leagues
-
     )
 
 
@@ -85,22 +85,15 @@ def dashboard():
 def create_league_view():
 
     seasons = Season.query.filter(
-
         Season.status.in_(
-
             [
                 SEASON_ACTIVE,
                 SEASON_UPCOMING
             ]
-
         )
-
     ).order_by(
-
         Season.sport,
-
         Season.year
-
     ).all()
 
     if request.method == "POST":
@@ -123,11 +116,9 @@ def create_league_view():
             )
 
             include_playoffs = (
-
                 request.form.get(
                     "include_playoffs"
                 ) == "on"
-
             )
 
             visibility = request.form.get(
@@ -227,24 +218,17 @@ def join_league_view():
         try:
 
             invite_code = (
-
                 request.form.get(
                     "invite_code",
                     ""
                 )
-
                 .strip()
-
                 .upper()
-
             )
 
             league = join_league(
-
                 user=current_user,
-
                 invite_code=invite_code
-
             )
 
             flash(
@@ -253,15 +237,10 @@ def join_league_view():
             )
 
             return redirect(
-
                 url_for(
-
                     "league.league_home",
-
                     public_id=league.public_id
-
                 )
-
             )
 
         except Exception as exc:
@@ -271,8 +250,22 @@ def join_league_view():
                 "danger"
             )
 
+    code = request.args.get(
+        "code",
+        ""
+    ).strip().upper()
+
+    preview = None
+
+    if code:
+
+        preview = get_league_preview_by_invite(
+            code
+        )
+
     return render_template(
-        "join_league.html"
+        "join_league.html",
+        preview=preview
     )
 
 
@@ -291,27 +284,18 @@ def league_home(public_id):
     )
 
     if not league:
-
         abort(404)
 
     if not is_member(
-
         league.id,
-
         current_user.id
-
     ):
-
         abort(403)
 
     members = league.memberships
 
     return render_template(
-
         "league_home.html",
-
         league=league,
-
         members=members
-
     )
